@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import json
 import numpy as np
+import functools
 
 
 @dataclass

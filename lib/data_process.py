@@ -9,8 +9,8 @@ from .utils import Config, NumpyArrayEncoder, default_kwargs
 
 class DataProcess:
     @default_kwargs(remove_static_noise=False, write_file=False, file_name=None)
-    def __init__(self, data, **kwargs):
-        self.raw_data = data
+    def __init__(self, **kwargs):
+        # self.raw_data = data
         self.args = kwargs
         self.length_list = list()
         self.xs = list()
@@ -170,8 +170,7 @@ class DataProcess:
             return color, groups, bounding_boxes, eigenvectors
         return 'r', [], [], []
 
-    @staticmethod
-    def project_on_plane(data):
+    def project_on_plane(self, data):
         vectors = data["vector"]
         groups = data["group"]
         projected_group = list()
@@ -204,3 +203,6 @@ class DataProcess:
             self._wrote_flag_raw = False
         else:
             self._writer.write(f",\n[{time.time()}, {new_line}]")
+
+    def finish_write(self):
+        self._processed_output.write("]")
