@@ -5,7 +5,7 @@ import numpy as np
 # import sounddevice
 
 
-data = json.load(open("output_file/wei_lr1.json", 'r'))
+data = json.load(open("output_file/test111.json", 'r'))
 entropy_list_x = list()
 entropy_list_y = list()
 delay = 15
