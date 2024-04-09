@@ -10,6 +10,8 @@ from .utils import Config, NumpyArrayEncoder, default_kwargs
 class DataProcess:
     @default_kwargs(remove_static_noise=False, write_file=False, file_name=None)
     def __init__(self, **kwargs):
+        self._wrote_flag_raw = None
+        self._wrote_flag_processed = None
         self.args = kwargs
         self.data_lists = {k: [] for k in ["x", "y", "z", "v", "r", "angle", "elev"]}
         self.length_list = []
