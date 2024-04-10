@@ -2,10 +2,9 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import numpy as np
-# import sounddevice
 
 
-data = json.load(open("output_file/wei_rl2.json", 'r'))
+data = json.load(open("output_file/wei_backward1.json", 'r'))
 entropy_list_x = list()
 entropy_list_y = list()
 delay = 15
@@ -34,9 +33,14 @@ for i in range(len(data)):
     if len(group_vector_mse) > 1:
         group = np.array(group_list[group_vector_mse.index(min(group_vector_mse))])
         vector = group_vector_list[group_vector_mse.index(min(group_vector_mse))]
+    elif len(group_vector_mse) == 0:
+        group = np.array([])
+        vector = []
+        continue
     else:
         group = np.array(group_list[0])
         vector = group_vector_list[0]
+
     group_transpose = group.T
     xs = group_transpose[0]
     ys = group_transpose[1]
