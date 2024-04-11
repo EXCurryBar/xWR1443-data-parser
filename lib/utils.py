@@ -7,7 +7,7 @@ import functools
 @dataclass
 class Config:
     PLOT_RANGE_IN_METER: int = 5
-    RADAR_HEIGHT_IN_METER: float = 1.83
+    RADAR_HEIGHT_IN_METER: float = 1.60
 
 
 def default_kwargs(**default_kwargs_decorator):

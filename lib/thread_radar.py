@@ -16,7 +16,7 @@ import functools
 from .utils import NumpyArrayEncoder
 
 PLOT_RANGE_IN_METER = 5
-RADAR_HEIGHT_IN_METER = 1.83
+RADAR_HEIGHT_IN_METER = 1.60
 
 
 def default_kwargs(**default_kwargs_decorator):
