@@ -497,35 +497,39 @@ class RadarThread(threading.Thread):
     def run(self):
         print(f"Server listening on {self.host}:{self.port}")
         while self.is_running:
-            # Use select to handle I/O readiness, including server socket for new connections
-            readable, _, exceptional = select.select([self.server_socket] + self.clients, [], self.clients, 0.1)
-            for s in readable:
-                if s is self.server_socket:
-                    client_socket, address = self.server_socket.accept()
-                    print(f"Connection from {address} has been established.")
-                    self.clients.append(client_socket)
+            try:
+                # Use select to handle I/O readiness, including server socket for new connections
+                readable, _, exceptional = select.select([self.server_socket] + self.clients, [], self.clients, 0.1)
+                for s in readable:
+                    if s is self.server_socket:
+                        client_socket, address = self.server_socket.accept()
+                        print(f"Connection from {address} has been established.")
+                        self.clients.append(client_socket)
 
-            # Clean up broken connections
-            for s in exceptional:
-                self.clients.remove(s)
-                s.close()
+                # Clean up broken connections
+                for s in exceptional:
+                    self.clients.remove(s)
+                    s.close()
 
-            # Continuously process radar data and broadcast to all connected clients
-            magic_ok, frame_number, radar_data = self.radar.parse_data()
-            if magic_ok:
-                data_str = json.dumps(radar_data, cls=NumpyArrayEncoder)
-                # print(data_str)
-                for client_socket in self.clients:
-                    try:
-                        client_socket.sendall(data_str.encode())
-                    except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError) as e:
-                        print(f"Error sending data to client: {e}")
-                        self.clients.remove(client_socket)
-                        client_socket.close()
+                # Continuously process radar data and broadcast to all connected clients
+                magic_ok, frame_number, radar_data = self.radar.parse_data()
+                if magic_ok:
+                    data_str = json.dumps(radar_data, cls=NumpyArrayEncoder)
+                    # print(data_str)
+                    for client_socket in self.clients:
+                        try:
+                            client_socket.sendall(data_str.encode())
+                        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError) as e:
+                            print(f"Error sending data to client: {e}")
+                            self.clients.remove(client_socket)
+                            client_socket.close()
+            except OSError as e:
+                print(f"Error sending data to client: {e}")
 
     def stop(self):
         self.is_running = False
         for client in self.clients:
             client.close()
+        self.join()
         self.server_socket.close()
         self.radar.close_connection()

@@ -31,3 +31,15 @@ class NumpyArrayEncoder(json.JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return super(NumpyArrayEncoder, self).default(obj)
+
+
+def thread_wrapper(threadfunc):
+    def wrapper():
+        while True:
+            try:
+                threadfunc()
+            except BaseException as e:
+                print("{!r};restarting".format(e))
+            except Exception:
+                print("Error occur, restarting")
+    return wrapper
