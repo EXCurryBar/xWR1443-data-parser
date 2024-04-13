@@ -25,6 +25,8 @@ class DataProcess:
             self._processed_output = open(f"./output_file/{file_name}.json", 'a', encoding="UTF-8")
 
     def process_cluster(self, detected_object, thr=10, delay=10):
+        if self.args["write_file"]:
+            self.write_to_json(detected_object)
         points = detected_object["3d_scatter"]
         self._update_lists(points, delay)
         scatter_data = np.column_stack((self.data_lists["x"], self.data_lists["y"], self.data_lists["z"]))
@@ -99,6 +101,7 @@ class DataProcess:
 
     def finish_write(self):
         if self.args["write_file"]:
+            self._writer.write("]")
             self._processed_output.write("]")
             self._processed_output.close()
             self._writer.close()
