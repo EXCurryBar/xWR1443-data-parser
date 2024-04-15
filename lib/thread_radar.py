@@ -492,7 +492,7 @@ class RadarThread(threading.Thread):
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen(5)
-        self.server_socket.setblocking(0)  # Set server socket to non-blocking
+        self.server_socket.setblocking(False)  # Set server socket to non-blocking
 
     def run(self):
         print(f"Server listening on {self.host}:{self.port}")
@@ -515,7 +515,7 @@ class RadarThread(threading.Thread):
                 magic_ok, frame_number, radar_data = self.radar.parse_data()
                 if magic_ok:
                     data_str = json.dumps(radar_data, cls=NumpyArrayEncoder)
-                    # print(data_str)
+                    pprint.pprint(radar_data["tracking_object"])
                     for client_socket in self.clients:
                         try:
                             client_socket.sendall(data_str.encode())

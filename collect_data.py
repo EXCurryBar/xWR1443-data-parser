@@ -55,7 +55,7 @@ def collect_data(file_name, host="localhost", port=5555):
             try:
                 data = s.recv(4096)
                 radar_data = json.loads(data.decode())
-                dp.process_cluster(radar_data, thr=30, delay=15)
+                dp.process_cluster(radar_data, thr=10, delay=15)
             except json.JSONDecodeError as e:
                 print("failed to decode json", e)
         dp.finish_write()

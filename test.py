@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 import numpy as np
 
 
-data = json.load(open("output_file/wei_backward1.json", 'r'))
+data = json.load(open("output_file/bbbb_light_fall_lr_0.json", 'r'))
 entropy_list_x = list()
 entropy_list_y = list()
 delay = 15
