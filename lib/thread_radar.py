@@ -514,8 +514,11 @@ class RadarThread(threading.Thread):
                 # Continuously process radar data and broadcast to all connected clients
                 magic_ok, frame_number, radar_data = self.radar.parse_data()
                 if magic_ok:
+                    if "3d_scatter" not in radar_data:
+                        self.radar.close_connection()
+                        self.is_running = False
+                        input("unplug the radar and press Enter...")
                     data_str = json.dumps(radar_data, cls=NumpyArrayEncoder)
-                    pprint.pprint(radar_data["tracking_object"])
                     for client_socket in self.clients:
                         try:
                             client_socket.sendall(data_str.encode())

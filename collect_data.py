@@ -67,20 +67,21 @@ def main():
     radar.start()
     subject = input("Enter subject name: ")
     for i, action in enumerate(ACTION):
-        for j in range(SET):
-            input(f"\n\nenter to start collecting {subject}'s {action} no.{j}:")
-            file_name = f"{subject}_{action}_{j}.json"
-            t1 = multiprocessing.Process(target=collect_data, args=(f"{subject}_{action}_{j}",))
-            t1.start()
+        if radar.is_running:
+            for j in range(SET):
+                input(f"\n\nenter to start collecting {subject}'s {action} no.{j}:")
+                file_name = f"{subject}_{action}_{j}.json"
+                t1 = multiprocessing.Process(target=collect_data, args=(f"{subject}_{action}_{j}",))
+                t1.start()
 
-            ev.set()
-            t1.join()
-            ev.clear()
-            if len(open("./output_file/" + file_name, "r").read()) <= 1:
-                print(f"No data in {file_name}, restarting...")
-                radar.stop()
-                radar = initialize_radar()
-                radar.start()
+                ev.set()
+                t1.join()
+                ev.clear()
+        else:
+            print("Radar UART not UARTing")
+            radar.join()
+            radar = initialize_radar()
+            radar.start()
 
 
 if __name__ == '__main__':

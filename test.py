@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 import numpy as np
 
 
-data = json.load(open("output_file/bbbb_light_fall_lr_0.json", 'r'))
+data = json.load(open("output_file/test02_light_fall_lr_0.json", 'r'))
 entropy_list_x = list()
 entropy_list_y = list()
 delay = 15
@@ -47,7 +47,7 @@ for i in range(len(data)):
     h, q_x, q_y = np.histogram2d(xs, ys, bins=bins, range=np.array([(-3, 3), (-3, 3)]))
     eigen_value = list(vector.explained_variance_)
     plt.cla()
-    plt.pcolormesh(q_x, q_y, h.T)
+    # plt.pcolormesh(q_x, q_y, h.T)
     plt.quiver(*origin, *(10*vector.components_[eigen_value.index(max(eigen_value))]), color='r', scale=30)
     plt.quiver(*origin, *(10*vector.components_[eigen_value.index(min(eigen_value))]), color='g', scale=30)
     plt.draw()

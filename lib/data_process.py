@@ -61,16 +61,19 @@ class DataProcess:
             group = scatter_data[label_mask]
             pca = PCA(n_components=3).fit(group)
             eigenvector = pca.components_[np.argmax(pca.explained_variance_ratio_)]
+            if eigenvector[0] < 0:
+                eigenvector = -eigenvector
+                group[:, 0] = -group[:, 0]
             data["group"].append(group.tolist())
             data["vector"].append(eigenvector.tolist())
             data["eigenvalues"].append(pca.explained_variance_.tolist())
-            # Bounding Box
 
         if self.args["write_file"]:
             self.write_processed_output(data)
         return clusters.tolist(), data["group"], data["bounding_box"], data["vector"]
 
-    def project_on_plane(self, data):
+    @staticmethod
+    def project_on_plane(data):
         vectors = data["vector"]
         groups = data["group"]
         projected_groups = []
