@@ -3,7 +3,6 @@ import time
 import json
 import os
 import socket
-import playsound
 import sys
 from lib.thread_radar import RadarThread
 from lib.data_process import DataProcess
@@ -13,10 +12,10 @@ ev = multiprocessing.Event()
 
 CLI_BAUD = 115200
 DATA_BAUD = 921600
-ACTION = ["light_fall_lr", "light_fall_rl", "light_fall_fw", "light_fall_bw", "heavy_fall_lr", "heavy_fall_rl",
-          "heavy_fall_fw", "heavy_fall_bw", "walk_fall_lr", "walk_fall_rl", "walk_fall_fw", "walk_fall_bw",
-          "sit", "squat", "pick_thing", "walk_pass_fw", "walk_pass_bw", "walk_pass_lr", "walk_pass_rl", "making_bed",
-          "swing", "step_still", "rotate_hand", "raise_hand"]
+# "light_fall_lr", "light_fall_rl", "light_fall_fw", "light_fall_bw", 
+# "sit", "squat", "pick_thing", "walk_pass_fw", "walk_pass_bw", "walk_pass_lr", "walk_pass_rl", "making_bed",
+#          "swing", "step_still", "rotate_hand", "raise_hand"
+ACTION = ["light_fall_lr", "light_fall_rl", "light_fall_fw", "light_fall_bw", "walk_fall_lr", "walk_fall_rl", "walk_fall_fw", "walk_fall_bw"]
 SET = 3
 
 
@@ -29,6 +28,7 @@ def initialize_radar(name=None):
 def beep():
     file = "./res/beep.mp3"
     if sys.platform == "win32" or sys.platform == "cygwin":
+        import playsound
         time.sleep(3)
         playsound.playsound(file, True)
 
@@ -36,6 +36,7 @@ def beep():
         playsound.playsound(file, True)
 
     elif sys.platform == "linux":
+        os.system("mpg123 " + file)
         time.sleep(3)
         os.system("mpg123 " + file)
 
