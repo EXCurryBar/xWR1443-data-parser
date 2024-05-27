@@ -96,7 +96,8 @@ class DataProcess:
         self._write_to_file(self._writer, new_line, self._wrote_flag_raw)
         self._wrote_flag_raw = False
 
-    def _write_to_file(self, file_obj, new_line, first_write):
+    @staticmethod
+    def _write_to_file(file_obj, new_line, first_write):
         if first_write:
             file_obj.write(f"[[{time.time()}, {new_line}]")
         else:

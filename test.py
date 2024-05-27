@@ -5,8 +5,6 @@ import numpy as np
 
 
 data = json.load(open("output_file/test02_light_fall_lr_0.json", 'r'))
-entropy_list_x = list()
-entropy_list_y = list()
 delay = 15
 bins = 25
 
