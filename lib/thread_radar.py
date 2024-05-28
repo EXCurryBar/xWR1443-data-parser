@@ -503,7 +503,7 @@ class RadarThread(threading.Thread):
                 for s in readable:
                     if s is self.server_socket:
                         client_socket, address = self.server_socket.accept()
-                        print(f"Connection from {address} has been established.")
+                        # print(f"Connection from {address} has been established.")
                         self.clients.append(client_socket)
 
                 # Clean up broken connections
@@ -523,7 +523,7 @@ class RadarThread(threading.Thread):
                         try:
                             client_socket.sendall(data_str.encode())
                         except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError) as e:
-                            print(f"Error sending data to client: {e}")
+                            # print(f"Error sending data to client: {e}")
                             self.clients.remove(client_socket)
                             client_socket.close()
             except OSError as e:

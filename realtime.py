@@ -39,7 +39,7 @@ def beep():
 
 
 def collect_data(host="localhost", port=5555):
-    model = load_model("./res/TPR0.93_TNR0.96.h5")
+    model = load_model("./res/TPR0.99_TNR1.00.h5")
     dp = DataProcess()
     pp = Preprocess()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

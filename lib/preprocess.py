@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import measurements
 
 DELAY = 15
-BINS = 100
+BINS = 50
 
 
 def cosine_similarity(vector1, vector2):
