@@ -4,6 +4,8 @@ import sys
 import codecs
 import binascii
 import struct
+import traceback
+
 import serial
 import serial.tools.list_ports
 import time
@@ -523,7 +525,8 @@ class RadarThread(threading.Thread):
                         try:
                             client_socket.sendall(data_str.encode())
                         except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError) as e:
-                            # print(f"Error sending data to client: {e}")
+                            # print(f"Server : no pc data")
+                            # traceback.print_exc()
                             self.clients.remove(client_socket)
                             client_socket.close()
             except OSError as e:

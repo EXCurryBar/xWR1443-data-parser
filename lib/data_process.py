@@ -29,7 +29,6 @@ class DataProcess:
         if self.args["write_file"]:
             self.write_to_json(detected_object)
         points = detected_object["3d_scatter"]
-
         self._update_lists(points, delay)
         scatter_data = np.column_stack((self.data_lists["x"], self.data_lists["y"], self.data_lists["z"]))
         if len(self.data_lists["x"]) > thr:
@@ -37,10 +36,10 @@ class DataProcess:
                 z = linkage(scatter_data, method="ward", metric="euclidean")
                 clusters = fcluster(z, 3.0, criterion='distance')
             except Exception as e:
-                return 'r', [], [], []
+                return 'r', [], [], [], []
 
-            return self._process_clusters(scatter_data, clusters, thr, points, detected_object["tracking_object"])
-        return 'r', [], [], []
+            return self._process_clusters(scatter_data, clusters, thr, points, detected_object["tracking_object"]["acc"])
+        return 'r', [], [], [], []
 
     def _update_lists(self, points, delay):
         if len(self.length_list) >= delay:
@@ -71,7 +70,7 @@ class DataProcess:
 
         if self.args["write_file"]:
             self.write_processed_output(data)
-        return clusters.tolist(), data["group"], data["bounding_box"], data["vector"]
+        return clusters.tolist(), data["group"], data["bounding_box"], data["vector"], acc
 
     @staticmethod
     def project_on_plane(data):
