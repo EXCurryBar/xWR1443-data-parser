@@ -54,7 +54,7 @@ def collect_data(file_name, host="localhost", port=5555):
         s.connect((host, port))
         while th.is_alive():
             try:
-                data = s.recv(4096)
+                data = s.recv(16384)
                 radar_data = json.loads(data.decode())
                 dp.process_cluster(radar_data, thr=10, delay=15)
             except json.JSONDecodeError as e:

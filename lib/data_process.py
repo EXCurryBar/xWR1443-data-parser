@@ -5,6 +5,7 @@ from datetime import datetime
 from sklearn.decomposition import PCA
 from scipy.cluster.hierarchy import linkage, fcluster
 from .utils import Config, NumpyArrayEncoder, default_kwargs
+import pprint
 
 
 class DataProcess:
@@ -28,9 +29,9 @@ class DataProcess:
         if self.args["write_file"]:
             self.write_to_json(detected_object)
         points = detected_object["3d_scatter"]
+
         self._update_lists(points, delay)
         scatter_data = np.column_stack((self.data_lists["x"], self.data_lists["y"], self.data_lists["z"]))
-
         if len(self.data_lists["x"]) > thr:
             try:
                 z = linkage(scatter_data, method="ward", metric="euclidean")
@@ -38,7 +39,7 @@ class DataProcess:
             except Exception as e:
                 return 'r', [], [], []
 
-            return self._process_clusters(scatter_data, clusters, thr, points)
+            return self._process_clusters(scatter_data, clusters, thr, points, detected_object["tracking_object"])
         return 'r', [], [], []
 
     def _update_lists(self, points, delay):
@@ -50,10 +51,10 @@ class DataProcess:
         for key, value in points.items():
             self.data_lists[key].extend(value)
 
-    def _process_clusters(self, scatter_data, clusters, thr, points):
+    def _process_clusters(self, scatter_data, clusters, thr, points, acc):
         labels = np.unique(clusters)
         data = {"scatter": points, "bounding_box": [], "group": [], "label": clusters.tolist(), "vector": [],
-                "eigenvalues": []}
+                "eigenvalues": [], "acc": []}
         for label in labels:
             label_mask = clusters == label
             if np.sum(label_mask) < thr:
