@@ -55,7 +55,7 @@ def collect_data(model, host="localhost", port=5555):
                 input_data = np.expand_dims(data, axis=0)
                 prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
                 print("acc: ", acc)
-                if prediction == 1 and any([item[-1] < 0 for item in acc]):
+                if prediction == 1 and any([item[-1] < -1 for item in acc]):
                     print("Prediction: Fall")
                     beep()
                 else:
