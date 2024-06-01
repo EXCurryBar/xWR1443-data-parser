@@ -41,6 +41,7 @@ def beep():
 def collect_data(model, host="localhost", port=5555):
     dp = DataProcess()
     pp = Preprocess()
+    prev = time.time()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
         while True:
@@ -48,18 +49,25 @@ def collect_data(model, host="localhost", port=5555):
                 data = s.recv(16384)
                 if not data:
                     break
-                print("================================")
+                now = time.time()
+                fps = str(round(1 / (now-prev), 2)) + ' '
+                if len(fps) < 6:
+                    fps+= (6-len(fps))*'='
+                print(f"\r=================== fps: {fps}===================",end ='')
+                prev = now
                 radar_data = json.loads(data.decode())
                 _, groups, _, vectors, acc = dp.process_cluster(radar_data, thr=10, delay=15)
-                data = pp.load_group_by_subject(groups, vectors)
-                input_data = np.expand_dims(data, axis=0)
-                prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
-                print("acc: ", acc)
-                if prediction == 1 and any([item[-1] < -1 for item in acc]):
-                    print("Prediction: Fall")
-                    beep()
-                else:
-                    print("Prediction: Not Fall")
+                if any(-10 < [item[-1] < -1 for item in acc]):
+                    data = pp.load_group_by_subject(groups, vectors)
+                    input_data = np.expand_dims(data, axis=0)
+                    prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
+                    if prediction == 1:
+                        print("acc: ", acc)
+                        print("Prediction: Fall")
+                        beep()
+                    else:
+                        print("acc: ", acc)
+                        print("Prediction: Not Fall")
 
             except Exception as e:
                 break

@@ -3,7 +3,7 @@ import sys
 
 while True:
     try:
-        choice = int(input("Radar Startup Script:\n\t1 > main.py\n\t2 > collect_data.py\n\t3> realtime.py\ninput:"))
+        choice = int(input("Radar Startup Script:\n\t1 > main.py\n\t2 > collect_data.py\n\t3 > realtime.py\ninput:"))
         if choice in [1, 2, 3]:
             break
         else:
