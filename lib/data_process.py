@@ -67,7 +67,8 @@ class DataProcess:
             data["group"].append(group.tolist())
             data["vector"].append(eigenvector.tolist())
             data["eigenvalues"].append(pca.explained_variance_.tolist())
-
+            new_groups = self.project_on_plane(data)
+            data["group"] = new_groups
         if self.args["write_file"]:
             self.write_processed_output(data)
         return clusters.tolist(), data["group"], data["bounding_box"], data["vector"], acc

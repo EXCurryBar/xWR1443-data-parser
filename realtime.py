@@ -52,12 +52,12 @@ def collect_data(model, host="localhost", port=5555):
                 now = time.time()
                 fps = str(round(1 / (now-prev), 2)) + ' '
                 if len(fps) < 6:
-                    fps+= (6-len(fps))*'='
-                print(f"\r=================== fps: {fps}===================",end ='')
+                    fps += (6-len(fps))*'='
+                print(f"\r=================== fps: {fps}===================", end='')
                 prev = now
                 radar_data = json.loads(data.decode())
                 _, groups, _, vectors, acc = dp.process_cluster(radar_data, thr=10, delay=15)
-                if any(-10 < [item[-1] < -1 for item in acc]):
+                if any([-10 < item[-1] < -1 for item in acc]):
                     data = pp.load_group_by_subject(groups, vectors)
                     input_data = np.expand_dims(data, axis=0)
                     prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
