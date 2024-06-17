@@ -57,11 +57,14 @@ def collect_data(model, host="localhost", port=5555):
                 prev = now
                 radar_data = json.loads(data.decode())
                 _, groups, _, vectors, acc = dp.process_cluster(radar_data, thr=10, delay=15)
-                if any([-10 < item[-1] < -1 for item in acc]):
+                if any([item[-1] < -0.3 for item in acc]):
                     data = pp.load_group_by_subject(groups, vectors)
                     input_data = np.expand_dims(data, axis=0)
                     prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
                     if prediction == 1:
+                        os.makedirs("./false_positive", exist_ok=True)
+                        with open(f"./false/{str(time.time()).split('.')}.jsonl", "a") as fp:
+                            fp.write(f"[{time.time()}, {data}],\n")
                         print("acc: ", acc)
                         print("Prediction: Fall")
                         beep()
@@ -74,7 +77,7 @@ def collect_data(model, host="localhost", port=5555):
 
 
 def main():
-    model = load_model("./res/TPR0.99_TNR1.00.h5")
+    model = load_model("./res/TPR0.90_TNR0.97.h5")
     radar = initialize_radar()
     radar.start()
     while True:

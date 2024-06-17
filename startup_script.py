@@ -17,7 +17,7 @@ if sys.platform == "linux":
 if choice == 1:
     from main import main
 elif choice == 2:
-    from collect_data import main
+    from collect_data import nmain as main
 elif choice == 3:
     from realtime import main
 

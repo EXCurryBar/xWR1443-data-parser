@@ -38,7 +38,7 @@ class DataProcess:
             except Exception as e:
                 return 'r', [], [], [], []
 
-            return self._process_clusters(scatter_data, clusters, thr, points, detected_object["tracking_object"]["acc"])
+            return self._process_clusters(scatter_data, clusters, thr, points, detected_object["tracking_object"].get("acc", []))
         return 'r', [], [], [], []
 
     def _update_lists(self, points, delay):

@@ -12,9 +12,7 @@ ev = multiprocessing.Event()
 
 CLI_BAUD = 115200
 DATA_BAUD = 921600
-# "light_fall_lr", "light_fall_rl", "light_fall_fw", "light_fall_bw", 
-# "sit", "squat", "pick_thing", "walk_pass_fw", "walk_pass_bw", "walk_pass_lr", "walk_pass_rl", "making_bed",
-#          "swing", "step_still", "rotate_hand", "raise_hand"
+
 ACTION = ["light_fall_lr", "light_fall_rl", "light_fall_fw", "light_fall_bw", "walk_fall_lr", "walk_fall_rl", "walk_fall_fw", "walk_fall_bw"]
 SET = 3
 
@@ -36,12 +34,13 @@ def beep():
         playsound.playsound(file, True)
 
     elif sys.platform == "linux":
-        os.system("mpg123 " + file)
-        time.sleep(3)
-        os.system("mpg123 " + file)
-
-        time.sleep(5)
-        os.system("mpg123 " + file)
+        # os.system("mpg123 " + file)
+        print("BEEP")
+        time.sleep(5.05)
+        # os.system("mpg123 " + file)
+        print("BEEP")
+        time.sleep(5.05)
+        # os.system("mpg123 " + file)
 
     return
 
@@ -63,6 +62,28 @@ def collect_data(file_name, host="localhost", port=5555):
     return
 
 
+def nmain():
+    radar = initialize_radar()
+    radar.start()
+    count = 0
+    while True:
+        if count % 4 == 0:
+            input("comtinue?")
+        if radar.is_running:
+            filename = f"{str(time.time())}"
+            t1 = multiprocessing.Process(target=collect_data, args=(filename,))
+            t1.start()
+
+            ev.set()
+            t1.join()
+            ev.clear()
+        else:
+            print("Radar UART not UARTing")
+            radar.join()
+            radar = initialize_radar()
+            radar.start()
+        count += 1
+
 def main():
     radar = initialize_radar()
     radar.start()
@@ -72,9 +93,10 @@ def main():
             for j in range(SET):
                 input(f"\n\nenter to start collecting {subject}'s {action} no.{j}:")
                 file_name = f"{subject}_{action}_{j}.json"
-                t1 = multiprocessing.Process(target=collect_data, args=(f"{subject}_{action}_{j}",))
+                print(file_name)
+                t1 = multiprocessing.Process(target=collect_data, args=(f"{file_name}",))
                 t1.start()
-
+                
                 ev.set()
                 t1.join()
                 ev.clear()
