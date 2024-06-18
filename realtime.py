@@ -53,11 +53,13 @@ def collect_data(model, host="localhost", port=5555):
                 fps = str(round(1 / (now-prev), 2)) + ' '
                 if len(fps) < 6:
                     fps += (6-len(fps))*'='
-                print(f"\r=================== fps: {fps}===================", end='')
                 prev = now
                 radar_data = json.loads(data.decode())
-                _, groups, _, vectors, acc = dp.process_cluster(radar_data, thr=10, delay=15)
-                if any([item[-1] < -0.3 for item in acc]):
+                velocity = radar_data["tracking_object"].get("v", [])
+                _, groups, _, vectors, _ = dp.process_cluster(radar_data, thr=10, delay=15)
+                print(velocity)
+                print(f"\r=================== fps: {fps}===================", end='')
+                if any([item[-1] < -0.8 for item in velocity]):
                     data = pp.load_group_by_subject(groups, vectors)
                     input_data = np.expand_dims(data, axis=0)
                     prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
@@ -65,11 +67,11 @@ def collect_data(model, host="localhost", port=5555):
                         os.makedirs("./false_positive", exist_ok=True)
                         with open(f"./false/{str(time.time()).split('.')}.jsonl", "a") as fp:
                             fp.write(f"[{time.time()}, {data}],\n")
-                        print("acc: ", acc)
+                        print("v: ", velocity)
                         print("Prediction: Fall")
                         beep()
                     else:
-                        print("acc: ", acc)
+                        print("v: ", velocity)
                         print("Prediction: Not Fall")
 
             except Exception as e:
