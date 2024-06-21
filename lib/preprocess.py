@@ -23,11 +23,11 @@ def cosine_similarity(vector1, vector2):
 class Preprocess:
     def __init__(self):
         self.count = 0
-        self.previous_vector = list()
+        self.previous_vector = None
 
     def load_group_by_subject(self, groups, vectors):
         similarity = list()
-        if len(vectors) == 1:
+        if len(vectors) == 1 or self.previous_vector is None:
             self.previous_vector = vectors[0]
             index = 0
         elif len(vectors) > 1:
@@ -40,6 +40,7 @@ class Preprocess:
         ys = group_transpose[1]
         data, qx, qy = np.histogram2d(xs, ys, bins=BINS, range=np.array([(-2, 2), (1, 4)]))
         return data.reshape((BINS, BINS, -1))
+        # return plt.pcolormesh(qx, qy, data)
 
     def generare_graph(self) -> list:
         all_graphs = list()

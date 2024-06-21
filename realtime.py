@@ -57,21 +57,19 @@ def collect_data(model, host="localhost", port=5555):
                 radar_data = json.loads(data.decode())
                 velocity = radar_data["tracking_object"].get("v", [])
                 _, groups, _, vectors, _ = dp.process_cluster(radar_data, thr=10, delay=15)
-                print(velocity)
                 print(f"\r=================== fps: {fps}===================", end='')
-                if any([item[-1] < -0.8 for item in velocity]):
+                if any([item[-1] < -(0.8/np.sqrt(2)) for item in velocity]) and len(groups) >= 1:
+                    print("\nDrop Detected")
                     data = pp.load_group_by_subject(groups, vectors)
                     input_data = np.expand_dims(data, axis=0)
                     prediction = (model.predict(input_data) > 0.5).astype(int)[0][0]
                     if prediction == 1:
                         os.makedirs("./false_positive", exist_ok=True)
-                        with open(f"./false/{str(time.time()).split('.')}.jsonl", "a") as fp:
-                            fp.write(f"[{time.time()}, {data}],\n")
-                        print("v: ", velocity)
+                        with open(f"./false_positive/{str(time.time()).split('.')}.json", "a") as fp:
+                            fp.write(f"[{time.time()}, {radar_data}],\n")
                         print("Prediction: Fall")
                         beep()
                     else:
-                        print("v: ", velocity)
                         print("Prediction: Not Fall")
 
             except Exception as e:
